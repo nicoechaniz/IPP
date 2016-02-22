@@ -31,10 +31,25 @@ Y clonar este repositorio:
 git clone https://github.com/nicoechaniz/IPP.git
 ```
 
-Si vas a correr los tests, debes instalar PhantomJS con el gestor de paquetes 
-de tu distribuciòn, ejemplos:
+Si vas a correr los tests, debes instalar PhantomJS manualmente o con el gestor de paquetes de tu distribuciòn, ejemplos:
+
 - Archlinux:
-  $ sudo pacman -S phantomjs
+
+```
+sudo pacman -S phantomjs
+```
+
+- Debian o Ubuntu:
+(guía completa: https://gist.github.com/julionc/7476620)
+
+_En el ejemplo se descarga phantomjs en /opt/, pero puede ser en cualquier ubicación._
+
+```
+cd /opt/
+wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
+tar xvfj phantomjs-2.1.1-linux-x86_64.tar.bz2
+ln -s /opt/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/
+```
 
 Si todo fue bien, deberíamos poder correr los tests sin errores:
 ```
