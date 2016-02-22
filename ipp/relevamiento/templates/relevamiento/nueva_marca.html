@@ -1,0 +1,14 @@
+{% extends "modal.html" %}
+
+{% load bootstrap3 %}
+
+{% block body %}
+<div class="row col-md-8">
+  <div class="modal-header">Nueva marca para: <strong>{{producto_generico}}</strong></div>
+   <form role="form" method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons submit='Guardar' %}{% endbuttons %}
+   </form>
+</div>
+{% endblock %}

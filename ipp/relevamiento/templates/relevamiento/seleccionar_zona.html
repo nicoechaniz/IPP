@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load bootstrap3%}
+
+{% block body %}
+<h4 class="page-header">Seleccionar zona</h4>
+<div class="jumbotron">
+<ul>
+{% for zona in object_list %}
+    <li><a href="{% url 'relevamiento:editar_zona' zona.pk%}">{{ zona }}</a></li>
+{% empty %}
+    <li>Aún no existen zonas</li>
+{% endfor %}
+</div>
+{% endblock %}

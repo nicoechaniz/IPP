@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load bootstrap3%}
+
+{% block body %}
+{% if seleccion %}
+<h4 class="page-header">Seleccionar muestra donde cargar nuevas lecturas</h4>
+<div class="jumbotron">
+<ul>
+  {% for muestra in seleccion %}
+  <li>
+    <a href="{% url 'relevamiento:editar_muestra' muestra.pk%}">{{ muestra }}</a>
+  </li>
+    {% endfor %}
+</ul>    
+</div>
+{% endif %}
+<h4 class="page-header">Crear una nueva muestra</h4>
+
+   <form role="form" method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons submit='Crear muestra' %}{% endbuttons %}
+    </form>
+
+
+{% endblock %}

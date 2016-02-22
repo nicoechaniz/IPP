@@ -1,0 +1,8 @@
+*~
+*.pyc
+*.bak
+db.sqlite3
+*yaml*
+*.log
+ipp_wsgi.ini
+

@@ -1,0 +1,68 @@
+{% extends "bootstrap3/bootstrap3.html" %}
+
+{% load bootstrap3 %}
+{% block bootstrap3_title %}{% block title %}{% endblock %}{% endblock %}
+
+{% block bootstrap3_extra_head %}
+  <style>
+    body{padding-top: 70px;}
+  </style>
+  {% block extra_head %}
+  {% endblock %}
+{% endblock %}
+
+{% block bootstrap3_content %}
+
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">IPP</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/">Acerca de</a></li>
+            {% if request.user.perfil.autorizacion > 0 %}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Acciones<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                {% include "relevamiento/acciones.html" %}
+              </ul>
+            </li>
+            {% endif %}
+          </ul>
+          <ul class="nav navbar-nav navbar-right">    
+            {% if request.user.is_authenticated %}
+            <li class="dropdown">
+              <a href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                {{request.user.username}}<span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                <li><a href="{% url "password_change" %}">Cambiar contraseña</a></li>
+                <li><a href="{% url "logout" %}">Salir</a></li>
+              </ul>
+            </li>
+            {% else%}
+            <li>
+              <a href="{% url "login" %}">Conectarse
+              </a>
+            </li>
+            {% endif%}
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container" role="main">
+      {# el bloque se llama body porque eso espera pinax_theme_bootstrap_account #}
+      {% bootstrap_messages %}
+      {% block body %}
+      {% endblock %}
+    </div>
+{% endblock %}
+

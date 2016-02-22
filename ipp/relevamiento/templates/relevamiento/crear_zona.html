@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block body %}
+<h4 class="page-header">Zona</h4>
+   <form role="form" method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons submit='Guardar' %}{% endbuttons %}
+    </form>
+{% endblock %}

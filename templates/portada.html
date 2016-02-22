@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block body %}
+{% if request.user.perfil.autorizacion >= 1 %}
+<h4 class="page-header">Acciones</h4>
+<div class="jumbotron">
+<ul class="list-unstyled">
+  {% include "relevamiento/acciones.html" %}
+</ul>
+</div>
+{% endif %}
+{% endblock %}

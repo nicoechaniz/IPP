@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h3 class="page-header">
+  Descargar datos
+</h3>
+<h4>Por región</h4>
+<ul>
+{% for muestra in muestras %}
+<li>
+  Año {{ muestra.anio }}, mes: {{ muestra.mes }}, quincena: {{ muestra.quincena }}, region: {{ muestra.region }}
+  <a href="{% url 'relevamiento:promedios_por_comercio' muestra.anio muestra.mes muestra.quincena muestra.region_id %}">
+    promedios
+  </a>,
+  <a href="{% url 'relevamiento:maximos_por_comercio' muestra.anio muestra.mes muestra.quincena muestra.region_id %}">
+    maximos
+  </a>,
+  <a href="{% url 'relevamiento:minimos_por_comercio' muestra.anio muestra.mes muestra.quincena muestra.region_id %}">
+    minimos
+  </a>
+  ({{ muestra.cantidad }} muestras)
+</li>
+{% endfor %}
+</ul>
+
+<h4>País completo</h4>
+<ul>
+{% for muestra in muestras_pais %}
+<li>
+  Año {{ muestra.anio }}, mes: {{ muestra.mes }}, quincena: {{ muestra.quincena }}
+  <a href="{% url 'relevamiento:promedios_por_comercio' muestra.anio muestra.mes muestra.quincena %}">
+    promedios
+  </a>,
+  <a href="{% url 'relevamiento:maximos_por_comercio' muestra.anio muestra.mes muestra.quincena %}">
+    maximos
+  </a>,
+  <a href="{% url 'relevamiento:minimos_por_comercio' muestra.anio muestra.mes muestra.quincena %}">
+    minimos
+  </a>,
+  ({{ muestra.cantidad }} muestras)
+</li>
+{% endfor %}
+</ul>
+
+{% endblock %}

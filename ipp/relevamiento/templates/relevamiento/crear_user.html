@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block body %}
+<h4 class="page-header">Usuario</h4>
+{#   {% bootstrap_formset_errors perfil_form %} #}
+   <form role="form" method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% bootstrap_formset perfil_form %}
+        {% buttons submit='Guardar' %}{% endbuttons %}
+    </form>
+{% endblock %}

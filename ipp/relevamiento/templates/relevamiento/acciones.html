@@ -1,0 +1,72 @@
+
+{% if request.user.perfil.autorizacion >= 1 %}
+<li class="dropdown-header">relevador</li>
+<li>
+  <a href="{% url 'relevamiento:seleccionar_muestra' %}">
+    Cargar lecturas de precios
+  </a>
+</li>
+<li>
+  <a href="{% url "relevamiento:seleccionar_planilla_de_relevamiento" %}">
+    Completar Planilla de Relevamiento
+  </a>
+</li>
+<li role="separator" class="divider"></li>
+{% endif %}
+{% if request.user.perfil.autorizacion >= 2 %}
+<li class="dropdown-header">coordinador</li>
+{% if request.user.perfil.autorizacion >= 4 %} {# COORD_REGIONAL #}
+<li>
+  <a href="{% url 'relevamiento:crear_jurisdiccion' %}">
+    Crear jurisdiccion
+  </a>
+</li>
+<li>
+  <a href="{% url 'relevamiento:seleccionar_jurisdiccion' %}">
+    Editar jurisdiccion
+  </a>
+</li>
+{% endif %}
+{% if request.user.perfil.autorizacion >= 3 %} {# COORD_JURISDICCIONAL #}
+<li>
+  <a href="{% url 'relevamiento:crear_zona' %}">
+    Crear zona
+  </a>
+</li>
+<li>
+  <a href="{% url 'relevamiento:seleccionar_zona' %}">
+    Editar zona
+  </a>
+</li>
+{% endif %}
+<li>
+  <a href="{% url 'relevamiento:crear_comercio' %}">
+    Crear comercio
+  </a>
+</li>
+<li>
+  <a href="{% url 'relevamiento:seleccionar_comercio' %}">
+    Editar comercio
+  </a>
+</li>
+<li>
+  <a href="{% url 'relevamiento:crear_usuario' %}">
+    Crear usuario
+  </a>
+</li>
+<li>
+  <a href="{% url 'relevamiento:seleccionar_usuario' %}">
+    Editar usuario
+  </a>
+</li>
+<li>
+  <a href="{% url "relevamiento:crear_planilla_de_relevamiento" %}">
+    Crear Planilla de Relevamiento
+  </a>
+</li>
+{% endif %}
+{% if request.user.perfil.autorizacion == 5 %} {# COORD_GENERAL #}
+<li class="dropdown-header">coordinador general</li>
+<li><a href="{% url 'relevamiento:descargar_datos' %}">Descargar datos</a></li>
+
+{% endif %}

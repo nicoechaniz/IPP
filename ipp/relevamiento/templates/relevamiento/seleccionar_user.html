@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load bootstrap3%}
+
+{% block body %}
+<h4 class="page-header">Seleccionar usuario</h4>
+<div class="jumbotron">
+<ul>
+{% for user in object_list %}
+    <li><a href="{% url 'relevamiento:editar_usuario' user.pk%}">{{ user }}</a></li>
+{% empty %}
+    <li>No existen usuarios en sus zonas habilitadas</li>
+{% endfor %}
+</div>
+{% endblock %}

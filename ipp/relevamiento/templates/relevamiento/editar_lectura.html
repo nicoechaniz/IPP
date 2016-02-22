@@ -1,0 +1,9 @@
+{% extends "relevamiento/form_modal.html" %}
+{% load bootstrap3 %}
+{% block modal_body %}
+       <form role="form" method="post" action="{% url 'relevamiento:editar_lectura' lectura_id %}">
+          {% csrf_token %}
+          {% bootstrap_form form %}
+          {% bootstrap_button "Guardar" button_type="submit" name="guardar_precio" %}
+      </form>
+{% endblock %}

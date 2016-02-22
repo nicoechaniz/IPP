@@ -1,0 +1,11 @@
+RELEVADOR = "relevador"
+COORD_ZONAL = "coordinador_zonal"
+COORD_JURISDICCIONAL = "coordinador_jurisdiccional"
+COORD_REGIONAL = "coordinador_regional"
+COORD_GRAL = "coordinador_general"
+
+PERMISO_RELEVADOR = 1
+PERMISO_COORD_ZONAL = 2
+PERMISO_COORD_JURISDICCIONAL = 3
+PERMISO_COORD_REGIONAL = 4
+PERMISO_COORD_GRAL = 5

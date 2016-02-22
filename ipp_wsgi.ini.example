@@ -1,0 +1,27 @@
+[uwsgi]
+
+# El directorio base (path completo)
+chdir           = /opt/ipp
+
+# módulo wsgi
+module          = ipp.wsgi
+
+# El entorno virtual/virtualenv (path completo)
+home            = /opt/ipp_workenv
+
+master          = true
+processes       = 10
+
+# ruta al socket (path completo)
+socket          = /opt/ipp/ipp.sock
+
+# permisos
+# chmod-socket    = 664
+
+# limpiar al salir
+vacuum          = true
+
+# usuario y grupo con el que va a correr el proceso
+uid		= www-data
+gid		= www-data
+

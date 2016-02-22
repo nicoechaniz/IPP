@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block body %}
+   <form role="form" method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons submit='Crear planilla' %}{% endbuttons %}
+    </form>
+ {% endblock %}

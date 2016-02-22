@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load bootstrap3%}
+
+{% block body %}
+<h4 class="page-header">Seleccionar jurisdiccion</h4>
+<div class="jumbotron">
+<ul>
+{% for jurisdiccion in object_list %}
+    <li><a href="{% url 'relevamiento:editar_jurisdiccion' jurisdiccion.pk%}">{{ jurisdiccion }}</a></li>
+{% empty %}
+    <li>Aún no existen jurisdiccions</li>
+{% endfor %}
+</div>
+{% endblock %}

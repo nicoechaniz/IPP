@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load bootstrap3%}
+
+{% block body %}
+<h4 class="page-header">Seleccionar comercio</h4>
+<div class="jumbotron">
+<ul>
+{% for comercio in object_list %}
+    <li><a href="{% url 'relevamiento:editar_comercio' comercio.pk%}">{{ comercio }}</a></li>
+{% empty %}
+    <li>Aún no existen comercios para sus zonas habilitadas</li>
+{% endfor %}
+</div>
+{% endblock %}

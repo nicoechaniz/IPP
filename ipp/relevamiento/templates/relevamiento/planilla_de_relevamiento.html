@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load bootstrap3%}
+
+{% block body %}
+      <h5>{{ planilla.planilla_modelo.nombre }}</h5>
+      <h5>{{zona}}</h5>
+      <h4 class="page-header">{{comercio}}, {{comercio.direccion}}</h4>
+
+      {% if autorizacion >= 2 %}
+      <p>
+        {% if planilla.habilitada %}
+        <a href="{% url 'relevamiento:deshabilitar_planilla_de_relevamiento' planilla.pk %}">
+          <button type="button" class="btn btn-warning btn-sm">Deshabilitar planilla</button>
+        </a>
+        <span class="help-block">Al deshabilitarla, la planilla dejará de estar disponible para cargar precios.</span>
+        {% else %}
+        <a href="{% url 'relevamiento:habilitar_planilla_de_relevamiento' planilla.pk %}">
+          <button type="button" class="btn btn-warning btn-sm">Habilitar planilla</button>
+        </a>
+        <span class="help-block">Una vez habilitada, la planilla estará disponible para cargar precios.</span>
+        {% endif %}
+      </p>
+      {% endif %}
+      <div class="table-responsive">
+          <table class="table table-striped table-bordered table-condensed">
+            <thead>
+              <tr>
+                <th></th>
+                <th class="text-center">el más barato</th>
+                <th class="text-center">de precio medio</th>
+                <th class="text-center">el más caro</th>
+              </tr>
+              <tr>
+                <th>Rubro > Producto (medida)</th>
+                <th class="text-center">Marca</th>
+                <th class="text-center">Marca</th>
+                <th class="text-center">Marca</th>
+              </tr>
+            </thead>
+            <tbody>
+          {% for d in datos %}
+            <tr>
+              <td>{{ d.producto }}</td>
+              {% for tipo_marca, marca  in d.marcas.items %}
+                {% if not marca %}
+                <td class="danger text-center">
+                  <a href="{% url 'relevamiento:establecer_marca' planilla.pk tipo_marca d.producto.pk %}">{% bootstrap_icon icon='edit' %}</a>
+                </td>
+                {% else %}
+                <td class="success text-center">{{ marca }}
+                  <a href="{% url 'relevamiento:remover_marca' planilla.pk tipo_marca d.producto.pk %}">{% bootstrap_icon icon='trash' %}</a>
+                </td>
+                {% endif %}
+              {% endfor %}
+            </tr>    
+          {% endfor %}
+            </tbody>
+          </table>
+      </div>
+{% endblock %}

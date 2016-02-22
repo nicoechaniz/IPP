@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block body %}
+  <ul>
+  {% for pr in seleccion %}
+    <li>  
+      <a href="{% url 'relevamiento:completar_planilla_de_relevamiento' pr.pk%}">{{ pr }}</a>
+    </li>
+    {% empty %}
+    <li>  
+      Aún no existen planillas de relevamiento
+    </li>
+    
+    {% endfor %}
+  <ul>
+{% endblock %}
