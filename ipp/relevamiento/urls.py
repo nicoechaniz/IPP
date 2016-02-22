@@ -22,7 +22,7 @@
 from django.conf.urls import url, patterns
 from django.contrib import admin
 
-from views import *
+from ipp.relevamiento.views import *
 
 urlpatterns = (
 #    url(r"^$", portada, name='portada'),
