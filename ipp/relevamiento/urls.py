@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 #    IPP, Plataforma web del Índice de Precios Popular
 #    Copyright (c) 2016 Nicolás Echániz and contributors.
 #
