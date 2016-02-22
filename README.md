@@ -31,6 +31,11 @@ Y clonar este repositorio:
 git clone https://github.com/nicoechaniz/IPP.git
 ```
 
+Si vas a correr los tests, debes instalar PhantomJS con el gestor de paquetes 
+de tu distribuciòn, ejemplos:
+- Archlinux:
+  $ sudo pacman -S phantomjs
+
 Si todo fue bien, deberíamos poder correr los tests sin errores:
 ```
 IPP/manage.py test bdd --behave_lang es
