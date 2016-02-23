@@ -74,3 +74,10 @@ def before_scenario(context, scenario):
 def after_all(context):
     context.browser.quit()
     context.browser = None
+
+
+def after_step(context, step):
+    if step.status == "failed":
+        # -- SOLUTION: But note that step.exc_info does not exist, yet.
+        import ipdb
+        ipdb.post_mortem(step.exc_traceback)
