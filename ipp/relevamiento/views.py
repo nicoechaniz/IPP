@@ -350,6 +350,21 @@ def editar_lectura(request, lectura_id):
         messages.error(request, 'Permisos insuficientes.')
         return render(request, 'relevamiento/mensaje.html')
 
+def remover_lectura(request, lectura_id, muestra_id):
+    user=request.user
+    if hasattr(user, "perfil") and \
+       user.perfil.autorizacion >= PERMISO_RELEVADOR:
+        try:
+            lectura = Lectura.objects.get(pk=lectura_id)
+        except JerarquizacionMarca.DoesNotExist:
+            raise Http404("La lectura requerida es inexistente.")
+
+        lectura.delete()
+        messages.success(request, 'Lectura para <strong>%s</strong> eliminada.' % lectura.producto_con_marca)
+        return redirect(reverse("relevamiento:editar_muestra",
+                                kwargs={"muestra_id": muestra_id}))
+
+
 class SeleccionarComercio(RequiereCoordZonal, ListView):
     model = Comercio
     template_name = "relevamiento/seleccionar_comercio.html"

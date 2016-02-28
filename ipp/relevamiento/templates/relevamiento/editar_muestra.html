@@ -56,11 +56,12 @@
                   <td class="success">
                     {{ lectura.producto_con_marca.marca }}
                   </td>
-                  <td class="success">
+                  <td class="success" nowrap>
                     {{ lectura.precio }}
                     <a href="{% url 'relevamiento:editar_lectura' lectura.pk %}"  data-toggle="modal" data-target="#myModal">
                       {% bootstrap_icon icon='edit' %}
                     </a>
+                    <a href="{% url 'relevamiento:remover_lectura' lectura.pk muestra.pk %}">{% bootstrap_icon icon='trash' %}</a>
                   </td>
                 {% endif %}
                {% else %}
