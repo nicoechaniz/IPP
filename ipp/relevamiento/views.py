@@ -253,6 +253,9 @@ def editar_muestra(request, muestra_id):
         muestra = Muestra.objects.get(pk=muestra_id)
     except Muestra.DoesNotExist:
         raise Http404("La muestra requerida es inexistente.")
+    if muestra.aprobada == True or muestra.planilla_de_relevamiento.habilitada == False:
+        messages.error(request, 'Esta muestra no puede ser editada.')
+        return redirect(reverse("relevamiento:seleccionar_muestra"))
 
     contexto = {"muestra": muestra, "mes": muestra.mes, "anio": muestra.anio,
                 "quincena": muestra.quincena, "zona": muestra.planilla_de_relevamiento.zona,
@@ -291,6 +294,14 @@ def editar_muestra(request, muestra_id):
 
 
 def crear_lectura(request, lectura_id=None, muestra_id=None, producto_id=None):
+    try:
+        muestra = Muestra.objects.get(pk=muestra_id)
+    except Muestra.DoesNotExist:
+        raise Http404("La muestra requerida es inexistente.")
+    if muestra.aprobada == True or muestra.planilla_de_relevamiento.habilitada == False:
+        messages.error(request, 'Esta muestra no puede ser editada.')
+        return render(request, 'relevamiento/mensaje_modal.html')
+
     user=request.user
     if hasattr(user, "perfil") and \
        user.perfil.autorizacion >= PERMISO_RELEVADOR:
@@ -305,10 +316,6 @@ def crear_lectura(request, lectura_id=None, muestra_id=None, producto_id=None):
                 return render(request, 'relevamiento/crear_lectura.html',
                               {"form": form, "muestra_id": muestra_id, "producto_id": producto_id})
         else:
-            try:
-                muestra = Muestra.objects.get(pk=muestra_id)
-            except Muestra.DoesNotExist:
-                raise Http404("La muestra requerida es inexistente.")
 
             try:
                 producto_con_marca = ProductoConMarca.objects.get(pk=producto_id)
@@ -325,14 +332,18 @@ def crear_lectura(request, lectura_id=None, muestra_id=None, producto_id=None):
     
 
 def editar_lectura(request, lectura_id):
+    try:
+        lectura = Lectura.objects.get(pk=lectura_id)
+    except Lectura.DoesNotExist:
+        raise Http404("La lectura requerida es inexistente.")
+    muestra = lectura.muestra
+    if muestra.aprobada == True or muestra.planilla_de_relevamiento.habilitada == False:
+        messages.error(request, 'Esta muestra no puede ser editada.')
+        return render(request, 'relevamiento/mensaje_modal.html')
+
     user=request.user
     if hasattr(user, "perfil") and \
-       user.perfil.autorizacion >= PERMISO_RELEVADOR:
-        try:
-            lectura = Lectura.objects.get(pk=lectura_id)
-        except Lectura.DoesNotExist:
-            raise Http404("La lectura requerida es inexistente.")
-        
+       user.perfil.autorizacion >= PERMISO_RELEVADOR:        
         if request.method == "POST":
             form = LecturaForm(request.POST, instance=lectura)
             if form.is_valid():
@@ -351,13 +362,18 @@ def editar_lectura(request, lectura_id):
         return render(request, 'relevamiento/mensaje.html')
 
 def remover_lectura(request, lectura_id, muestra_id):
+    try:
+        lectura = Lectura.objects.get(pk=lectura_id)
+    except JerarquizacionMarca.DoesNotExist:
+        raise Http404("La lectura requerida es inexistente.")
+    muestra = lectura.muestra
+    if muestra.aprobada == True or muestra.planilla_de_relevamiento.habilitada == False:
+        messages.error(request, 'Esta muestra no puede ser editada.')
+        return redirect(reverse("relevamiento:editar_muestra",
+                                kwargs={"muestra_id": muestra_id}))
     user=request.user
     if hasattr(user, "perfil") and \
        user.perfil.autorizacion >= PERMISO_RELEVADOR:
-        try:
-            lectura = Lectura.objects.get(pk=lectura_id)
-        except JerarquizacionMarca.DoesNotExist:
-            raise Http404("La lectura requerida es inexistente.")
 
         lectura.delete()
         messages.success(request, 'Lectura para <strong>%s</strong> eliminada.' % lectura.producto_con_marca)
