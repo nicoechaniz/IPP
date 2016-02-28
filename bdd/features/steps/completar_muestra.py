@@ -27,7 +27,7 @@ from behave import *
 from utils import seleccionar_primera_opcion
 
 from ipp.relevamiento.constants import RELEVADOR
-from ipp.relevamiento.factories import MuestraFactory, JerarquizacionMarcaFactory
+from ipp.relevamiento.factories import JerarquizacionMarcaFactory
 from ipp.relevamiento.models import Muestra, PlanillaDeRelevamiento, Perfil, ProductoConMarca
 
 @given(u'los productos en la planilla tienen marcas establecidas')
@@ -41,7 +41,7 @@ def impl(context):
                                    planilla_de_relevamiento=planilla,
                                    producto_con_marca=producto_con_marca)
         
-@when(u'selecciono la muestra creada')
+@when(u'selecciono la Muestra')
 def impl(context):
     muestra = Muestra.objects.last()
     url = reverse("relevamiento:editar_muestra",

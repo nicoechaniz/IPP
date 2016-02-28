@@ -237,7 +237,7 @@ def seleccionar_muestra(request):
        request.user.perfil.autorizacion >= PERMISO_RELEVADOR:
         seleccion = Muestra.objects.filter(
             planilla_de_relevamiento__zona__in=user.perfil.zonas_permitidas.all(),
-            planilla_de_relevamiento__habilitada=True)
+            planilla_de_relevamiento__habilitada=True, aprobada=False)
         if request.method == "POST":
             form = MuestraForm(request.POST, user=user)
             if form.is_valid():
@@ -257,7 +257,8 @@ def editar_muestra(request, muestra_id):
     contexto = {"muestra": muestra, "mes": muestra.mes, "anio": muestra.anio,
                 "quincena": muestra.quincena, "zona": muestra.planilla_de_relevamiento.zona,
                 "comercio": muestra.planilla_de_relevamiento.comercio,
-                "relevadores": muestra.relevadores.all() }
+                "relevadores": muestra.relevadores.all(),
+                "autorizacion": request.user.perfil.autorizacion }
 
     planilla_modelo = muestra.planilla_de_relevamiento.planilla_modelo
     planilla_de_relevamiento = muestra.planilla_de_relevamiento
@@ -633,3 +634,19 @@ def maximos_por_comercio(request, anio, mes, quincena, region_id=None):
 
 def minimos_por_comercio(request, anio, mes, quincena, region_id=None):
     return _agregado_por_comercio(request, anio, mes, quincena, region_id, Min, "minimos_")
+
+
+def aprobar_muestra(request, muestra_id):
+    if not (hasattr(request.user, "perfil") and \
+            request.user.perfil.autorizacion >= PERMISO_COORD_ZONAL):
+        messages.error(request, 'Permisos insuficientes.')
+        return render(request, 'relevamiento/mensaje.html')
+    try:
+        muestra = Muestra.objects.get(pk=muestra_id)
+    except Muestra.DoesNotExist:
+        raise Http404("La muestra requerida es inexistente.")
+
+    muestra.aprobada = True
+    muestra.save()
+    messages.success(request, 'La muestra fue aprobada.')
+    return redirect(reverse("relevamiento:seleccionar_muestra"))

@@ -38,6 +38,7 @@ urlpatterns = (
     url(r"^editar_muestra/(?P<muestra_id>[0-9]+)$", editar_muestra, name='editar_muestra'),
     url(r"^crear_lectura/(?P<muestra_id>[0-9]+)/(?P<producto_id>[0-9]+)$", crear_lectura, name='crear_lectura'),
     url(r"^editar_lectura/(?P<lectura_id>[0-9]+)$", editar_lectura, name='editar_lectura'),
+    url(r"^aprobar_muestra/(?P<muestra_id>[0-9]+)$", aprobar_muestra, name='aprobar_muestra'),
     url(r"^seleccionar_comercio/$", SeleccionarComercio.as_view(), name='seleccionar_comercio'),
     url(r"^crear_comercio/$", CrearComercio.as_view(), name='crear_comercio'),
     url(r"^editar_comercio/(?P<pk>[0-9]+)$", EditarComercio.as_view(), name='editar_comercio'),

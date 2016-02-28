@@ -7,7 +7,7 @@
       <h4 class="page-header">{{comercio}}, {{comercio.direccion}}</h4>
 
       {% if autorizacion >= 2 %}
-      <p>
+      <p class="well">
         {% if planilla.habilitada %}
         <a href="{% url 'relevamiento:deshabilitar_planilla_de_relevamiento' planilla.pk %}">
           <button type="button" class="btn btn-warning btn-sm">Deshabilitar planilla</button>

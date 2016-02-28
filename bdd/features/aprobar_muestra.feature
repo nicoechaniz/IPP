@@ -17,22 +17,23 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-Característica: Completar Muestra
-  Como relevador
-  Quiero poder completar precios en planillas de Muestra
+Característica: Aprobar Muestra
+  Como coordinador
+  Quiero poder aprobar muestras de lecturas de precios
+  Para que ya no sean editables los precios de las muestras aprobadas
 
-Antecedentes: Existe un conjunto básico de información
-  Dado que existe al menos una Planilla de Relevamiento
-  Y que existen varios Productos con marca
-  Y que la Planilla de Relevamiento está habilitada
-  Y los productos en la planilla tienen marcas establecidas
+  Antecedentes: Existe un conjunto básico de información
+    Dado que existe al menos una Planilla de Relevamiento
+    Y que existen varios Productos con marca
+    Y que la Planilla de Relevamiento está habilitada
+    Y los productos en la planilla tienen marcas establecidas
+    Y que existe una Muestra con lecturas de precios
 
-Escenario: Cargar precios de productos
-  Dado que me logueo en el sistema y mi Rol es de relevador
-  Y accedo a la funcionalidad para cargar lecturas de precios
-  Cuando completo el formulario para crear una Muestra nueva y lo envío
-  Y selecciono la Muestra
-  Cuando establezco el precio para un producto
-  Entonces la planilla refleja el precio cargado
-  Y si edito el precio cargado
-  Entonces la planilla refleja el nuevo precio
+  Escenario: Aprobar Muestra
+    Dado que me logueo en el sistema y mi Rol es de coordinador
+    Y accedo a la funcionalidad para cargar lecturas de precios
+    Cuando selecciono la Muestra
+    Y apruebo la Muestra
+    Entonces la Muestra queda aprobada
+    Y ya no aparece en el listado para cargar lecturas
+

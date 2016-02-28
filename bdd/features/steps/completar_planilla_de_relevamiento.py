@@ -19,6 +19,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from time import sleep
 from django.core.urlresolvers import reverse
 from behave import *
 
@@ -87,5 +88,7 @@ def impl(context):
 
 @then(u'la planilla queda habilitada')
 def impl(context):
+    # el test corriendo en firefox falla si no esperamos aquí
+    sleep(1)
     planilla = PlanillaDeRelevamiento.objects.last()
     assert(planilla.habilitada==True)
