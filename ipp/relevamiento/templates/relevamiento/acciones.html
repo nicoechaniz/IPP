@@ -13,7 +13,7 @@
 </li>
 <li role="separator" class="divider"></li>
 {% endif %}
-{% if request.user.perfil.autorizacion >= 2 %}
+{% if request.user.perfil.autorizacion >= 2 %}{# COORD_ZONAL #}
 <li class="dropdown-header">coordinador</li>
 {% if request.user.perfil.autorizacion >= 4 %} {# COORD_REGIONAL #}
 <li>
@@ -64,9 +64,9 @@
     Crear Planilla de Relevamiento
   </a>
 </li>
-{% endif %}
-{% if request.user.perfil.autorizacion == 5 %} {# COORD_GENERAL #}
-<li class="dropdown-header">coordinador general</li>
-<li><a href="{% url 'relevamiento:descargar_datos' %}">Descargar datos</a></li>
-
+<li>
+  <a href="{% url 'relevamiento:descargar_datos' %}">
+    Descargar datos
+  </a>
+</li>
 {% endif %}
