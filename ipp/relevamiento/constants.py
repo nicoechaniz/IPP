@@ -30,3 +30,18 @@ PERMISO_COORD_ZONAL = 2
 PERMISO_COORD_JURISDICCIONAL = 3
 PERMISO_COORD_REGIONAL = 4
 PERMISO_COORD_GRAL = 5
+
+MES_CHOICES = (
+    (1, "enero"),
+    (2, "febrero"),
+    (3, "marzo"),
+    (4, "abril"),
+    (5, "mayo"),
+    (6, "junio"),
+    (7, "julio"),
+    (8, "agosto"),
+    (9, "septiembre"),
+    (10, "octubre"),
+    (11, "noviembre"),
+    (12, "diciembre")
+)

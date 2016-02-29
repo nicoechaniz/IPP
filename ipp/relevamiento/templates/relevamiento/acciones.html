@@ -69,4 +69,11 @@
     Descargar datos
   </a>
 </li>
+{% if request.user.perfil.autorizacion >= 5 %} {# COORD_GENERAL #}
+<li>
+  <a href="{% url 'relevamiento:seleccionar_periodo_variacion' %}">
+    Calcular variación de precios
+  </a>
+</li>
+{% endif %}
 {% endif %}

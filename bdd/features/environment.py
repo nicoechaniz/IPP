@@ -75,7 +75,6 @@ def after_all(context):
     context.browser.quit()
     context.browser = None
 
-
 def after_step(context, step):
     if step.status == "failed":
         # -- SOLUTION: But note that step.exc_info does not exist, yet.

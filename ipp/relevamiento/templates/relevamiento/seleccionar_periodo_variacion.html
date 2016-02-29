@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block body %}
+<h4 class="page-header">Seleccionar período para calcular variación de precios.</h4>
+<div class="row col-md-8">
+  <form role="form" method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons submit='Calcular' %}{% endbuttons %}
+   </form>
+</div>
+    
+
+{% endblock %}
+
+{% block bootstrap3_extra_script %}
+  <script type="text/javascript">
+  document.getElementById("id_anio1").focus();
+  </script>
+{% endblock %}

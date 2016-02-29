@@ -27,7 +27,8 @@ from django.core.urlresolvers import reverse
 from datetime import datetime
 
 from .constants import RELEVADOR, COORD_ZONAL, COORD_JURISDICCIONAL, COORD_REGIONAL, COORD_GRAL,\
-    PERMISO_RELEVADOR, PERMISO_COORD_ZONAL, PERMISO_COORD_JURISDICCIONAL, PERMISO_COORD_REGIONAL, PERMISO_COORD_GRAL
+    PERMISO_RELEVADOR, PERMISO_COORD_ZONAL, PERMISO_COORD_JURISDICCIONAL,\
+    PERMISO_COORD_REGIONAL, PERMISO_COORD_GRAL, MES_CHOICES
 
 
 class Region(models.Model):
@@ -251,21 +252,6 @@ class Lectura(models.Model):
 
 class Muestra(models.Model):
     """Muestra de lecturas quincenales para un comercio"""
-    MES_CHOICES = (
-        (1, "enero"),
-        (2, "febrero"),
-        (3, "marzo"),
-        (4, "abril"),
-        (5, "mayo"),
-        (6, "junio"),
-        (7, "julio"),
-        (8, "agosto"),
-        (9, "septiembre"),
-        (10, "octubre"),
-        (11, "noviembre"),
-        (12, "diciembre")
-    )
-    
     planilla_de_relevamiento = models.ForeignKey(PlanillaDeRelevamiento, related_name="muestras")
     anio = models.IntegerField(u"año")
     mes = models.IntegerField(choices=MES_CHOICES)

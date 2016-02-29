@@ -31,6 +31,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 from django.contrib.auth.models import User
 from django.db.models import Q, F, Avg, Max, Min, Count
+from django.db.models.functions import Concat
 from django.utils.text import slugify
 
 import unicodecsv as csv
@@ -39,7 +40,7 @@ from .constants import PERMISO_RELEVADOR, PERMISO_COORD_ZONAL, PERMISO_COORD_JUR
     PERMISO_COORD_REGIONAL, PERMISO_COORD_GRAL, RELEVADOR, COORD_ZONAL, COORD_JURISDICCIONAL,\
     COORD_REGIONAL, COORD_GRAL
 from .forms import PlanillaDeRelevamientoForm, JerarquizacionMarcaForm, ProductoConMarcaForm,\
-    MuestraForm, LecturaForm, UserFormCreacion, UserFormEdicion, PerfilFormSet
+    MuestraForm, LecturaForm, UserFormCreacion, UserFormEdicion, PerfilFormSet, VariacionForm
 from .models import PlanillaModelo, PlanillaDeRelevamiento, JerarquizacionMarca, ProductoGenerico,\
     ProductoConMarca, Lectura, Comercio, Perfil, Muestra, PlanillaDeRelevamiento, JerarquizacionMarca,\
     Zona, Comercio, Jurisdiccion, Region
@@ -607,13 +608,12 @@ def descargar_datos(request):
                   {"regiones": regiones, "muestras": muestras, "muestras_pais": muestras_pais})
 
 
-def _agregado_por_comercio(request, anio, mes, quincena, region_id, funcion, prefijo):
-    if not (hasattr(request.user, "perfil") and \
-            request.user.perfil.autorizacion >= PERMISO_COORD_ZONAL):
-        messages.error(request, 'Permisos insuficientes.')
-        return render(request, 'relevamiento/mensaje.html')
-
-    muestras = Muestra.objects.filter(anio=anio, mes=mes, quincena=quincena)
+def _lecturas_del_periodo(anio, mes, quincena=None, region_id=None, funcion=Avg):
+    muestras = Muestra.objects.filter(anio=anio, mes=mes)
+    if quincena:
+        muestras = muestras.filter(quincena=quincena)
+    # TODO(nicoechaniz): cuando ya esté en uso la aprobación de muestras
+    # agregar aprobada=True a este filtro
     lecturas = Lectura.objects.filter(muestra__in=muestras, precio__gt=0)
     if region_id:
         lecturas = lecturas.filter(
@@ -624,12 +624,22 @@ def _agregado_por_comercio(request, anio, mes, quincena, region_id, funcion, pre
                        .annotate(comercio=F('muestra__planilla_de_relevamiento__comercio__nombre'))\
                        .values('comercio', 'producto')\
                        .annotate(valor=funcion('precio'))\
+                       .annotate(c_p=Concat(F('muestra__planilla_de_relevamiento__comercio__nombre'),
+                                            F("producto_con_marca__producto_generico__nombre")))\
                        .order_by('orden', 'comercio')
+    return lecturas
 
-    comercios = Comercio.objects.filter(planillas_de_relevamiento__muestras__in=muestras).values("nombre")
+def _agregado_por_comercio(request, anio, mes, quincena, region_id, funcion, prefijo):
+    if not (hasattr(request.user, "perfil") and \
+            request.user.perfil.autorizacion >= PERMISO_COORD_ZONAL):
+        messages.error(request, 'Permisos insuficientes.')
+        return render(request, 'relevamiento/mensaje.html')
+
+    lecturas = _lecturas_del_periodo(anio, mes, quincena, region_id, funcion)
+
+    # Pivot de los resultados
     lecturas_por_comercio = OrderedDict()
     encabezado = ["Producto"]
-
     for lectura in lecturas:
         if lectura['comercio'] not in encabezado:
             encabezado.append(lectura['comercio'])
@@ -656,7 +666,6 @@ def _agregado_por_comercio(request, anio, mes, quincena, region_id, funcion, pre
         
     return response
 
-
 def promedios_por_comercio(request, anio, mes, quincena, region_id=None):
     return _agregado_por_comercio(request, anio, mes, quincena, region_id, Avg, "promedio_")
 
@@ -681,3 +690,84 @@ def aprobar_muestra(request, muestra_id):
     muestra.save()
     messages.success(request, 'La muestra fue aprobada.')
     return redirect(reverse("relevamiento:seleccionar_muestra"))
+
+def seleccionar_periodo_variacion(request):
+    if not (hasattr(request.user, "perfil") and \
+            request.user.perfil.autorizacion >= PERMISO_COORD_GRAL):
+        messages.error(request, 'Permisos insuficientes.')
+        return render(request, 'relevamiento/mensaje.html')
+
+    if request.method == "POST":
+        form = VariacionForm(request.POST)
+        if form.is_valid():
+            argumentos = []
+            argumentos.append(form.cleaned_data["anio1"])
+            argumentos.append(form.cleaned_data["mes1"].zfill(2))
+            argumentos.append(form.cleaned_data["anio2"])
+            argumentos.append(form.cleaned_data["mes2"].zfill(2))
+            if form.cleaned_data["region"]:
+                argumentos.append(form.cleaned_data["region"].id)
+            return redirect(reverse("relevamiento:variacion", args=argumentos))
+
+    form = VariacionForm()
+    return render(request, 'relevamiento/seleccionar_periodo_variacion.html',
+                  {"form": form})
+
+def variacion(request, anio1, mes1, anio2, mes2, region_id=None):
+    if not (hasattr(request.user, "perfil") and \
+            request.user.perfil.autorizacion >= PERMISO_COORD_GRAL):
+        messages.error(request, 'Permisos insuficientes.')
+        return render(request, 'relevamiento/mensaje.html')
+
+    lecturas1 = _lecturas_del_periodo(anio1, mes1, region_id=region_id, funcion=Avg)
+    lecturas2 = _lecturas_del_periodo(anio2, mes2, region_id=region_id, funcion=Avg)
+
+    if lecturas1 and lecturas2:
+        total_lecturas1 = lecturas1.count()
+        total_lecturas2 = lecturas2.count()
+        total_comercios1 = lecturas1.values("comercio").distinct().count()
+        total_comercios2 = lecturas2.values("comercio").distinct().count()
+
+        # Removemos los "miss" del segundo set de lecturas:
+        # combinaciones de comercio_producto que en segundo período no se relevaron
+        c_ps1 = [ lectura["c_p"] for lectura in lecturas1 ]
+        l2_sin_miss = lecturas2.filter(c_p__in=c_ps1)
+
+        # Removemos los "miss" del primer set de lecturas
+        # así sólo quedan las lecturas donde producto y comercio fueron relevados
+        # en ambos períodos considerados
+        c_ps2 = [ lectura["c_p"] for lectura in lecturas2 ]
+        l1_sin_miss = lecturas1.filter(c_p__in=c_ps2)
+        
+        if not region_id:
+            region = u"Todo el país"
+        else:
+            region = u"región "+ Region.objects.get(pk=region_id).nombre
+
+        contexto = {"anio1": anio1, "mes1": mes1,
+                    "anio2": anio2, "mes2": mes2,
+                    "region": region }
+
+        promedio1 = lecturas1.aggregate(Avg('valor'))['valor__avg']
+        promedio2 = lecturas2.aggregate(Avg('valor'))['valor__avg']
+        contexto["variacion"] = (promedio2 - promedio1) * 100 / promedio1
+
+        contexto["comercios1"] = lecturas1.values("comercio").distinct().count()
+        contexto["comercios2"] = lecturas2.values("comercio").distinct().count()
+
+        contexto["total_lecturas1"] = total_lecturas1
+        contexto["total_lecturas2"] = total_lecturas2
+
+        # si quedaron lecturas después de remover los miss
+        if l1_sin_miss and l2_sin_miss:
+            promedio1_sm = l1_sin_miss.aggregate(Avg('valor'))['valor__avg']
+            promedio2_sm = l2_sin_miss.aggregate(Avg('valor'))['valor__avg']
+            contexto["variacion_sin_miss"] = (promedio2_sm - promedio1_sm) * 100 / promedio1_sm
+            contexto["comercios_sin_miss"] = l1_sin_miss.values("comercio").distinct().count()
+            contexto["total_lecturas_sin_miss"] = l1_sin_miss.count()
+
+        return render(request, 'relevamiento/variacion.html', contexto)
+
+    else:
+        messages.error(request, 'No hay datos para ese período.')
+        return render(request, 'relevamiento/mensaje.html')

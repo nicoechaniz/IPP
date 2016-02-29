@@ -56,5 +56,8 @@ urlpatterns = (
     url('^promedios_por_comercio/(?P<anio>[0-9]{4})/(?P<mes>[0-9]{1,2})/(?P<quincena>[1-2]{1})/(?P<region_id>[0-9]*)?$', promedios_por_comercio, name="promedios_por_comercio"),
     url('^maximos_por_comercio/(?P<anio>[0-9]{4})/(?P<mes>[0-9]{1,2})/(?P<quincena>[1-2]{1})/(?P<region_id>[0-9]*)?$', maximos_por_comercio, name="maximos_por_comercio"),
     url('^minimos_por_comercio/(?P<anio>[0-9]{4})/(?P<mes>[0-9]{1,2})/(?P<quincena>[1-2]{1})/(?P<region_id>[0-9]*)?$', minimos_por_comercio, name="minimos_por_comercio"),
-    url('^descargar_datos$', descargar_datos, name="descargar_datos")
+    url('^descargar_datos$', descargar_datos, name="descargar_datos"),
+    url('^seleccionar_periodo_variacion$', seleccionar_periodo_variacion, name="seleccionar_periodo_variacion"),
+    url('^variacion/(?P<anio1>[0-9]{4})/(?P<mes1>[0-9]{1,2})/(?P<anio2>[0-9]{4})/(?P<mes2>[0-9]{1,2})$', variacion, name="variacion"),
+    url('^variacion/(?P<anio1>[0-9]{4})/(?P<mes1>[0-9]{1,2})/(?P<anio2>[0-9]{4})/(?P<mes2>[0-9]{1,2})/(?P<region_id>[0-9]{1})$', variacion, name="variacion"),
 )

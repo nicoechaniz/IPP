@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h3>Porcentaje de variación de precios para <strong>{{ region }}</strong></h3>
+<h2 class="page-header">Período: {{ mes1 }}/{{ anio1 }} y {{ mes2 }}/{{ anio2 }}</h2>
+<div class="well">
+  <h4>variación con miss: <strong>{{ variacion|floatformat:"-2" }}%</strong></h4>
+  <p>lecturas consideradas para {{ mes1 }}/{{ anio1 }}: {{ total_lecturas1 }} (de {{ comercios1 }} comercio{{ comercios1|pluralize }})</p>
+  <p>lecturas consideradas para {{ mes2 }}/{{ anio2 }}: {{ total_lecturas2 }} (de {{ comercios2 }} comercio{{ comercios2|pluralize }})</p>
+</div>
+
+<div class="well">
+  <h4>variación sin miss: <strong>{{ variacion_sin_miss|floatformat:"-2" }}%</strong></h4>
+  {% if variacion_sin_miss %}
+  <p>lecturas consideradas: {{ total_lecturas_sin_miss }} (de {{ comercios_sin_miss }} comercio{{ comercios_sin_miss|pluralize }})</p>
+  {% else %}
+  <p>Hubo 100% miss. Ninguna lectura (comercio/producto) tomada en un período existe en el otro.</p>
+  {% endif %}
+</div>
+{% endblock %}

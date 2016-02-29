@@ -18,18 +18,18 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import datetime
 
-from django.forms import ModelForm, ValidationError, HiddenInput
+from django.forms import ModelForm, ValidationError, HiddenInput, IntegerField
 from django.forms.models import inlineformset_factory
 from django.contrib.auth.models import User
-from django.forms import BaseInlineFormSet, EmailField
+from django.forms import Form, BaseInlineFormSet, EmailField, ChoiceField, ModelChoiceField
 
 import autocomplete_light
 
 from .models import PlanillaDeRelevamiento, JerarquizacionMarca, ProductoConMarca, ProductoGenerico, Muestra, Perfil, Lectura, Zona, Jurisdiccion, Region, Comercio
-from .constants import RELEVADOR, COORD_ZONAL, COORD_JURISDICCIONAL, COORD_REGIONAL, COORD_GRAL
+from .constants import RELEVADOR, COORD_ZONAL, COORD_JURISDICCIONAL, COORD_REGIONAL, COORD_GRAL, MES_CHOICES
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-
 
 class JerarquizacionMarcaForm(autocomplete_light.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -224,3 +224,13 @@ class PerfilInlineFormSet(BaseInlineFormSet):
 
 PerfilFormSet = inlineformset_factory(User, Perfil, fields="__all__",
                                       can_delete=False, formset=PerfilInlineFormSet)
+
+class VariacionForm(Form):
+    # por defecto elije el mes pasado y el mes actual
+    anio1 = IntegerField(label="año inico",
+                         initial=(datetime.date.today().replace(day=1)-datetime.timedelta(days=1)).year)
+    mes1 = ChoiceField(label="mes inico", choices=MES_CHOICES,\
+                       initial=(datetime.date.today().replace(day=1)-datetime.timedelta(days=1)).month)
+    anio2 = IntegerField(label="año fin", initial=datetime.date.today().year)
+    mes2 = ChoiceField(label="mes fin", choices=MES_CHOICES, initial=datetime.date.today().month)
+    region = ModelChoiceField(label="región", queryset=Region.objects.all(), required=False)
