@@ -250,6 +250,10 @@ def seleccionar_muestra(request):
 
 
 def editar_muestra(request, muestra_id):
+    if not (hasattr(request.user, "perfil") and \
+            request.user.perfil.autorizacion >= PERMISO_RELEVADOR):
+        messages.error(request, 'Permisos insuficientes.')
+        return render(request, 'relevamiento/mensaje.html')
     try:
         muestra = Muestra.objects.get(pk=muestra_id)
     except Muestra.DoesNotExist:
@@ -295,6 +299,10 @@ def editar_muestra(request, muestra_id):
 
 
 def crear_lectura(request, lectura_id=None, muestra_id=None, producto_id=None):
+    if not (hasattr(request.user, "perfil") and \
+            request.user.perfil.autorizacion >= PERMISO_RELEVADOR):
+        messages.error(request, 'Permisos insuficientes.')
+        return render(request, 'relevamiento/mensaje.html')
     try:
         muestra = Muestra.objects.get(pk=muestra_id)
     except Muestra.DoesNotExist:
@@ -333,6 +341,10 @@ def crear_lectura(request, lectura_id=None, muestra_id=None, producto_id=None):
     
 
 def editar_lectura(request, lectura_id):
+    if not (hasattr(request.user, "perfil") and \
+            request.user.perfil.autorizacion >= PERMISO_RELEVADOR):
+        messages.error(request, 'Permisos insuficientes.')
+        return render(request, 'relevamiento/mensaje.html')
     try:
         lectura = Lectura.objects.get(pk=lectura_id)
     except Lectura.DoesNotExist:
@@ -363,6 +375,10 @@ def editar_lectura(request, lectura_id):
         return render(request, 'relevamiento/mensaje.html')
 
 def remover_lectura(request, lectura_id, muestra_id):
+    if not (hasattr(request.user, "perfil") and \
+            request.user.perfil.autorizacion >= PERMISO_RELEVADOR):
+        messages.error(request, 'Permisos insuficientes.')
+        return render(request, 'relevamiento/mensaje.html')
     try:
         lectura = Lectura.objects.get(pk=lectura_id)
     except JerarquizacionMarca.DoesNotExist:
