@@ -34,7 +34,7 @@ from .constants import RELEVADOR, COORD_ZONAL, COORD_JURISDICCIONAL, COORD_REGIO
 class Region(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
     class Meta:
@@ -46,7 +46,7 @@ class Jurisdiccion(models.Model):
     region = models.ForeignKey(Region, related_name="jurisdicciones")
     nombre = models.CharField(max_length=100)
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.region) +" > "+ self.nombre
 
     class Meta:
@@ -59,7 +59,7 @@ class Zona(models.Model):
     jurisdiccion = models.ForeignKey(Jurisdiccion, related_name="zonas")
     nombre = models.CharField(max_length=100)
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.jurisdiccion) +" > "+ self.nombre
 
     class Meta:
@@ -85,7 +85,7 @@ class Perfil(models.Model):
     jurisdicciones = models.ManyToManyField(Jurisdiccion, blank=True)
     zonas = models.ManyToManyField(Zona, blank=True, related_name="perfiles")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.user.username
 
     @property
@@ -140,12 +140,12 @@ class Comercio(models.Model):
     descripcion = models.CharField("descripción", max_length=256, blank=True)
     zona =  models.ForeignKey(Zona, related_name="comercios")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
 class Rubro(models.Model):
     nombre = models.CharField(max_length=100)
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
     
@@ -154,7 +154,7 @@ class ProductoGenerico(models.Model):
     nombre = models.CharField(max_length=150)
     medida = models.CharField(max_length=20)
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s > %s (%s)" % (self.rubro, self.nombre, self.medida)
     
     class Meta:
@@ -165,7 +165,7 @@ class ProductoEnPlanilla(models.Model):
     producto_generico = models.ForeignKey(ProductoGenerico)
     planilla_modelo = models.ForeignKey("PlanillaModelo")
     orden = models.IntegerField()
-    def __unicode__(self):
+    def __str__(self):
         return str(self.producto_generico)
 
     class Meta:
@@ -179,7 +179,7 @@ class PlanillaModelo(models.Model):
                                        through=ProductoEnPlanilla, blank=True)
     habilitada = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
     class Meta:
@@ -190,7 +190,7 @@ class ProductoConMarca(models.Model):
     producto_generico = models.ForeignKey(ProductoGenerico)
     marca = models.CharField(max_length=50, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s %s" %\
             (str(self.producto_generico), self.marca)
 
@@ -208,7 +208,7 @@ class JerarquizacionMarca(models.Model):
     planilla_de_relevamiento = models.ForeignKey("PlanillaDeRelevamiento")
     producto_con_marca = models.ForeignKey(ProductoConMarca, related_name="jerarquizaciones", verbose_name="producto")
     tipo_marca = models.CharField(choices=MARCA_CHOICES, max_length=15)
-    def __unicode__(self):
+    def __str__(self):
         return "%s (marca %s)" %\
             (str(self.producto_con_marca), self.tipo_marca)
 
@@ -225,7 +225,7 @@ class PlanillaDeRelevamiento(models.Model):
                                        through=JerarquizacionMarca, blank=True)
     habilitada = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s (%s)" % \
             (str(self.comercio), str(self.zona))
 
@@ -242,7 +242,7 @@ class Lectura(models.Model):
     muestra = models.ForeignKey('Muestra', related_name="lecturas")
 #    relevador = models.ForeignKey(Perfil)
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s $%s (%s)" % \
             (str(self.producto_con_marca), str(self.precio), str(self.fecha))
 
@@ -260,7 +260,7 @@ class Muestra(models.Model):
     completa = models.BooleanField(default=False)
     aprobada = models.BooleanField(default=False)
     
-    def __unicode__(self):
+    def __str__(self):
         nombre = "%s (%s/%s, quincena %s)" %\
                  (str(self.planilla_de_relevamiento), self.mes, self.anio, self.quincena)
         return nombre
