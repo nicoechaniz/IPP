@@ -31,29 +31,29 @@ from ipp.relevamiento.factories import MuestraFactory, LecturaFactory
 import sys
 python_3 = sys.version.startswith('3')
 
-@given(u'que existe una Muestra con lecturas de precios')
+@given('que existe una Muestra con lecturas de precios')
 def impl(context):
     planilla = PlanillaDeRelevamiento.objects.last()
     muestra = MuestraFactory(planilla_de_relevamiento=planilla, anio=2016, mes=1, quincena=1)
     for producto in planilla.productos.all():
         LecturaFactory(producto_con_marca=producto, precio=10, muestra=muestra)
 
-@when(u'apruebo la Muestra')
+@when('apruebo la Muestra')
 def impl(context):
     muestra = Muestra.objects.last()
     url = reverse("relevamiento:aprobar_muestra",
                   kwargs={"muestra_id": muestra.id})
     context.browser.click_link_by_href(url)
 
-@then(u'la Muestra queda aprobada')
+@then('la Muestra queda aprobada')
 def impl(context):
     muestra = Muestra.objects.last()
     assert muestra.aprobada == True
 
-@then(u'ya no aparece en el listado para cargar lecturas')
+@then('ya no aparece en el listado para cargar lecturas')
 def impl(context):
     muestra = Muestra.objects.last()
     if not python_3:
-        muestra = unicode(muestra)
+        muestra = str(muestra)
     assert context.browser.is_element_present_by_text(muestra) == False
 

@@ -30,7 +30,7 @@ from ipp.relevamiento.constants import RELEVADOR
 from ipp.relevamiento.factories import JerarquizacionMarcaFactory
 from ipp.relevamiento.models import Muestra, PlanillaDeRelevamiento, Perfil, ProductoConMarca
 
-@given(u'los productos en la planilla tienen marcas establecidas')
+@given('los productos en la planilla tienen marcas establecidas')
 def impl(context):
     planilla = PlanillaDeRelevamiento.objects.last()
     producto_ids = [p.id for p in planilla.planilla_modelo.productos.all()]
@@ -41,14 +41,14 @@ def impl(context):
                                    planilla_de_relevamiento=planilla,
                                    producto_con_marca=producto_con_marca)
         
-@when(u'selecciono la Muestra')
+@when('selecciono la Muestra')
 def impl(context):
     muestra = Muestra.objects.last()
     url = reverse("relevamiento:editar_muestra",
                   kwargs={"muestra_id": muestra.id})
     context.browser.click_link_by_href(url)
 
-@when(u'establezco el precio para un producto')
+@when('establezco el precio para un producto')
 def impl(context):
     context.browser.find_by_css('span.glyphicon').first.click()
     # cuando el behave_browser es un browser real, demora la animación para mostrar el modal
@@ -56,12 +56,12 @@ def impl(context):
     context.browser.fill('precio', 112)
     context.browser.find_by_name('guardar_precio').first.click()
     
-@then(u'la planilla refleja el precio cargado')
+@then('la planilla refleja el precio cargado')
 def impl(context):
-    ocurrencia = context.browser.find_by_css('td.success')[1].html.find(u"112")
+    ocurrencia = context.browser.find_by_css('td.success')[1].html.find("112")
     assert ocurrencia >= 0
 
-@then(u'si edito el precio cargado')
+@then('si edito el precio cargado')
 def impl(context):
     context.browser.find_by_css('span.glyphicon').first.click()
     # cuando el behave_browser es un browser real, demora la animación para mostrar el modal
@@ -69,7 +69,7 @@ def impl(context):
     context.browser.fill('precio', 116)
     context.browser.find_by_name('guardar_precio').first.click()
 
-@then(u'la planilla refleja el nuevo precio')
+@then('la planilla refleja el nuevo precio')
 def impl(context):
-    ocurrencia = context.browser.find_by_css('td.success')[1].html.find(u"116")
+    ocurrencia = context.browser.find_by_css('td.success')[1].html.find("116")
     assert ocurrencia >= 0

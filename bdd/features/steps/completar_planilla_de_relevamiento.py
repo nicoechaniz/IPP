@@ -32,7 +32,7 @@ import sys
 python_3 = sys.version.startswith('3')
 
 
-@given(u'que existe al menos una Planilla de Relevamiento')
+@given('que existe al menos una Planilla de Relevamiento')
 def impl(context):
     planilla_modelo = PlanillaModelo.objects.first()
     zona = Zona.objects.first()
@@ -40,24 +40,24 @@ def impl(context):
     planilla_de_relevamiento = PlanillaDeRelevamientoFactory(planilla_modelo=planilla_modelo,
                                                              zona=zona, comercio=comercio)
 
-@given(u'que existen varios Productos con marca')
+@given('que existen varios Productos con marca')
 def impl(context):
     for prod_generico in ProductoGenerico.objects.all():
         ProductoConMarcaFactory(producto_generico=prod_generico, marca=context.MARCA_POR_DEFECTO)
 
-@given(u'accedo a la funcionalidad para completar Planilla de Relevamiento')
+@given('accedo a la funcionalidad para completar Planilla de Relevamiento')
 def impl(context):
     url = reverse("relevamiento:seleccionar_planilla_de_relevamiento")
     context.browser.visit(context.config.server_url + url)
 
-@given(u'elijo una Planilla de Relevamiento para trabajar')
+@given('elijo una Planilla de Relevamiento para trabajar')
 def impl(context):
     planilla = PlanillaDeRelevamiento.objects.last()
     url = reverse("relevamiento:completar_planilla_de_relevamiento",
                   kwargs={"planilla_id": planilla.pk})
     context.browser.click_link_by_partial_href(url)
 
-@when(u'establezco marcas para algunos productos')
+@when('establezco marcas para algunos productos')
 def impl(context):
     planilla = PlanillaDeRelevamiento.objects.last()
     producto_ids = [p.id for p in planilla.planilla_modelo.productos.all()]
@@ -72,21 +72,21 @@ def impl(context):
                                         context.MARCA_POR_DEFECTO):
             # el auto-complete trae la opción; la buscamos por su texto
             if not python_3:
-                producto_con_marca = unicode(producto_con_marca)
+                producto_con_marca = str(producto_con_marca)
             if context.browser.is_element_present_by_text(producto_con_marca):
                 opcion = context.browser.find_by_text(producto_con_marca)
                 opcion.first.click()
                 context.browser.find_by_css('form button[type=submit]').first.click()
                 break
         
-@when(u'habilito la planilla')
+@when('habilito la planilla')
 def impl(context):
     planilla = PlanillaDeRelevamiento.objects.last()
     url = reverse("relevamiento:habilitar_planilla_de_relevamiento",
                   kwargs={"planilla_id": planilla.id})
     context.browser.click_link_by_href(url)
 
-@then(u'la planilla queda habilitada')
+@then('la planilla queda habilitada')
 def impl(context):
     # el test corriendo en firefox falla si no esperamos aquí
     sleep(1)

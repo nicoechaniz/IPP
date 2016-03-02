@@ -92,7 +92,7 @@ class ProductoConMarcaForm(ModelForm):
         existente = ProductoConMarca.objects.filter(producto_generico=producto_generico,
                                                     marca__iexact=marca)
         if existente:
-            raise ValidationError(u"Ya existe la marca %s para ese producto genérico." %\
+            raise ValidationError("Ya existe la marca %s para ese producto genérico." %\
                                   marca.lower())
 
 

@@ -274,7 +274,7 @@ def editar_muestra(request, muestra_id):
     contexto["nombre_planilla"] = planilla_modelo.nombre
     for producto_generico in planilla_modelo.productos.all():
         lecturas = OrderedDict([("economica", {}), ("media", {}), ("premium", {})])        
-        for tipo_marca in lecturas.keys():
+        for tipo_marca in list(lecturas.keys()):
             try:
                 producto_con_marca = planilla_de_relevamiento.productos.get(
                     producto_generico=producto_generico, jerarquizaciones__tipo_marca=tipo_marca)
@@ -675,7 +675,7 @@ def _agregado_por_comercio(request, anio, mes, quincena, region_id, funcion, pre
 
     writer = csv.DictWriter(response, fieldnames=encabezado)
     writer.writeheader()
-    for producto, lecturas_dict in lecturas_por_comercio.items():
+    for producto, lecturas_dict in list(lecturas_por_comercio.items()):
         row = {"Producto": producto}
         row.update(lecturas_dict)
         writer.writerow(row)
@@ -756,9 +756,9 @@ def variacion(request, anio1, mes1, anio2, mes2, region_id=None):
         l1_sin_miss = lecturas1.filter(c_p__in=c_ps2)
         
         if not region_id:
-            region = u"Todo el país"
+            region = "Todo el país"
         else:
-            region = u"región "+ Region.objects.get(pk=region_id).nombre
+            region = "región "+ Region.objects.get(pk=region_id).nombre
 
         contexto = {"anio1": anio1, "mes1": mes1,
                     "anio2": anio2, "mes2": mes2,

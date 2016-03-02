@@ -19,7 +19,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import unicode_literals
+
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -38,8 +38,8 @@ class Region(models.Model):
         return self.nombre
 
     class Meta:
-        verbose_name = u"región"
-        verbose_name_plural = u"regiones"
+        verbose_name = "región"
+        verbose_name_plural = "regiones"
 
 
 class Jurisdiccion(models.Model):
@@ -47,11 +47,11 @@ class Jurisdiccion(models.Model):
     nombre = models.CharField(max_length=100)
 
     def __unicode__(self):
-        return unicode(self.region) +" > "+ self.nombre
+        return str(self.region) +" > "+ self.nombre
 
     class Meta:
-        verbose_name = u"jurisdicción"
-        verbose_name_plural = u"jurisdicciones"
+        verbose_name = "jurisdicción"
+        verbose_name_plural = "jurisdicciones"
         ordering = ['region__pk', 'nombre']
         unique_together = (("region", "nombre"))
 
@@ -60,7 +60,7 @@ class Zona(models.Model):
     nombre = models.CharField(max_length=100)
 
     def __unicode__(self):
-        return unicode(self.jurisdiccion) +" > "+ self.nombre
+        return str(self.jurisdiccion) +" > "+ self.nombre
 
     class Meta:
         ordering = ['jurisdiccion__region__pk', 'jurisdiccion__nombre', 'nombre']
@@ -131,13 +131,13 @@ class Perfil(models.Model):
             return Zona.objects.none()
         
     class Meta:
-        verbose_name_plural = u"perfiles"
+        verbose_name_plural = "perfiles"
 
 class Comercio(models.Model):
     nombre = models.CharField(max_length=100)
-    direccion = models.CharField(u"dirección", max_length=100)
-    tipo = models.CharField(u"tipo de comercio", max_length=100)
-    descripcion = models.CharField(u"descripción", max_length=256, blank=True)
+    direccion = models.CharField("dirección", max_length=100)
+    tipo = models.CharField("tipo de comercio", max_length=100)
+    descripcion = models.CharField("descripción", max_length=256, blank=True)
     zona =  models.ForeignKey(Zona, related_name="comercios")
 
     def __unicode__(self):
@@ -158,7 +158,7 @@ class ProductoGenerico(models.Model):
         return "%s > %s (%s)" % (self.rubro, self.nombre, self.medida)
     
     class Meta:
-        verbose_name_plural=u"productos genericos"
+        verbose_name_plural="productos genericos"
 
 
 class ProductoEnPlanilla(models.Model):
@@ -166,7 +166,7 @@ class ProductoEnPlanilla(models.Model):
     planilla_modelo = models.ForeignKey("PlanillaModelo")
     orden = models.IntegerField()
     def __unicode__(self):
-        return unicode(self.producto_generico)
+        return str(self.producto_generico)
 
     class Meta:
         unique_together = (("planilla_modelo", "orden"), ("planilla_modelo", "producto_generico"))
@@ -183,7 +183,7 @@ class PlanillaModelo(models.Model):
         return self.nombre
 
     class Meta:
-        verbose_name_plural=u"planillas modelo"
+        verbose_name_plural="planillas modelo"
 
 
 class ProductoConMarca(models.Model):
@@ -191,12 +191,12 @@ class ProductoConMarca(models.Model):
     marca = models.CharField(max_length=50, blank=True)
 
     def __unicode__(self):
-        return u"%s %s" %\
-            (unicode(self.producto_generico), self.marca)
+        return "%s %s" %\
+            (str(self.producto_generico), self.marca)
 
     class Meta:
-        verbose_name=u"producto"
-        verbose_name_plural=u"productos"
+        verbose_name="producto"
+        verbose_name_plural="productos"
         unique_together = (("producto_generico", "marca"),)
 
 class JerarquizacionMarca(models.Model):
@@ -209,8 +209,8 @@ class JerarquizacionMarca(models.Model):
     producto_con_marca = models.ForeignKey(ProductoConMarca, related_name="jerarquizaciones", verbose_name="producto")
     tipo_marca = models.CharField(choices=MARCA_CHOICES, max_length=15)
     def __unicode__(self):
-        return u"%s (marca %s)" %\
-            (unicode(self.producto_con_marca), self.tipo_marca)
+        return "%s (marca %s)" %\
+            (str(self.producto_con_marca), self.tipo_marca)
 
     class Meta:
         unique_together = (("planilla_de_relevamiento", "producto_con_marca"),)
@@ -227,11 +227,11 @@ class PlanillaDeRelevamiento(models.Model):
 
     def __unicode__(self):
         return "%s (%s)" % \
-            (unicode(self.comercio), unicode(self.zona))
+            (str(self.comercio), str(self.zona))
 
     class Meta:
         unique_together = (("planilla_modelo", "zona", "comercio"),)
-        verbose_name_plural = u"planillas de relevamiento"
+        verbose_name_plural = "planillas de relevamiento"
         ordering = ['planilla_modelo__nombre', 'zona']
 
 
@@ -244,7 +244,7 @@ class Lectura(models.Model):
 
     def __unicode__(self):
         return "%s $%s (%s)" % \
-            (unicode(self.producto_con_marca), str(self.precio), str(self.fecha))
+            (str(self.producto_con_marca), str(self.precio), str(self.fecha))
 
     class Meta:
         unique_together = (("producto_con_marca", "muestra"),)
@@ -253,7 +253,7 @@ class Lectura(models.Model):
 class Muestra(models.Model):
     """Muestra de lecturas quincenales para un comercio"""
     planilla_de_relevamiento = models.ForeignKey(PlanillaDeRelevamiento, related_name="muestras")
-    anio = models.IntegerField(u"año")
+    anio = models.IntegerField("año")
     mes = models.IntegerField(choices=MES_CHOICES)
     quincena = models.IntegerField(choices=((1, "primera"),(2, "segunda")))
     relevadores = models.ManyToManyField(Perfil, blank=True)
@@ -261,8 +261,8 @@ class Muestra(models.Model):
     aprobada = models.BooleanField(default=False)
     
     def __unicode__(self):
-        nombre = u"%s (%s/%s, quincena %s)" %\
-                 (unicode(self.planilla_de_relevamiento), self.mes, self.anio, self.quincena)
+        nombre = "%s (%s/%s, quincena %s)" %\
+                 (str(self.planilla_de_relevamiento), self.mes, self.anio, self.quincena)
         return nombre
 
     class Meta:

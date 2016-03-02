@@ -32,20 +32,20 @@ import sys
 python_3 = sys.version.startswith('3')
 
 
-@given(u'que la Planilla de Relevamiento está habilitada')
+@given('que la Planilla de Relevamiento está habilitada')
 def impl(context):
     planilla_de_relevamiento = PlanillaDeRelevamiento.objects.first()
     planilla_de_relevamiento.habilitada = True
     planilla_de_relevamiento.save()
     context.planilla_de_relevamiento_id = planilla_de_relevamiento.id
 
-@given(u'accedo a la funcionalidad para cargar lecturas de precios')
+@given('accedo a la funcionalidad para cargar lecturas de precios')
 def impl(context):
     context.browser.click_link_by_text("Acciones")
     url = reverse("relevamiento:seleccionar_muestra")
     context.browser.click_link_by_href(url)
 
-@when(u'completo el formulario para crear una Muestra nueva y lo envío')
+@when('completo el formulario para crear una Muestra nueva y lo envío')
 def impl(context):
     seleccionar_primera_opcion(context.browser, "planilla_de_relevamiento")
     context.browser.fill('anio', "2016")
@@ -54,10 +54,10 @@ def impl(context):
     seleccionar_primera_opcion(context.browser, "relevadores")
     context.browser.find_by_css('form button[type=submit]').first.click()
 
-@then(u'he creado una nueva Muestra')
+@then('he creado una nueva Muestra')
 def impl(context):
     muestra = Muestra.objects.get(planilla_de_relevamiento__pk=context.planilla_de_relevamiento_id)
     if not python_3:
-        muestra = unicode(muestra)
+        muestra = str(muestra)
     ocurrencias = context.browser.find_by_text(muestra)
     assert(len(ocurrencias)>0)
