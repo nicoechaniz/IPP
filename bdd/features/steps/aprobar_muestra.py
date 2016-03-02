@@ -28,9 +28,6 @@ from ipp.relevamiento.models import PlanillaDeRelevamiento, Muestra
 from ipp.relevamiento.factories import MuestraFactory, LecturaFactory
 
 
-import sys
-python_3 = sys.version.startswith('3')
-
 @given('que existe una Muestra con lecturas de precios')
 def impl(context):
     planilla = PlanillaDeRelevamiento.objects.last()
@@ -53,7 +50,5 @@ def impl(context):
 @then('ya no aparece en el listado para cargar lecturas')
 def impl(context):
     muestra = Muestra.objects.last()
-    if not python_3:
-        muestra = str(muestra)
     assert context.browser.is_element_present_by_text(muestra) == False
 

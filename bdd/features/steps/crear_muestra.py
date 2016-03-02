@@ -28,10 +28,6 @@ from ipp.relevamiento.constants import COORD_ZONAL
 from ipp.relevamiento.models import PlanillaDeRelevamiento, Muestra
 
 
-import sys
-python_3 = sys.version.startswith('3')
-
-
 @given('que la Planilla de Relevamiento está habilitada')
 def impl(context):
     planilla_de_relevamiento = PlanillaDeRelevamiento.objects.first()
@@ -57,7 +53,5 @@ def impl(context):
 @then('he creado una nueva Muestra')
 def impl(context):
     muestra = Muestra.objects.get(planilla_de_relevamiento__pk=context.planilla_de_relevamiento_id)
-    if not python_3:
-        muestra = str(muestra)
     ocurrencias = context.browser.find_by_text(muestra)
     assert(len(ocurrencias)>0)
