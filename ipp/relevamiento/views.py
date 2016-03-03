@@ -612,12 +612,12 @@ def descargar_datos(request):
         return render(request, 'relevamiento/mensaje.html')
 
     regiones = Region.objects.all()
-    muestras = Muestra.objects.all()\
+    muestras = Muestra.objects.filter(aprobada=True)\
                               .values("anio", "mes", "quincena")\
                               .annotate(region=F("planilla_de_relevamiento__zona__jurisdiccion__region__nombre"))\
                               .annotate(region_id=F("planilla_de_relevamiento__zona__jurisdiccion__region__id"))\
                               .annotate(cantidad=Count("id")).order_by("-anio", "-mes", "-quincena", "region")
-    muestras_pais = Muestra.objects.all().values("anio", "mes", "quincena")\
+    muestras_pais = Muestra.objects.filter(aprobada=True).values("anio", "mes", "quincena")\
                                          .annotate(cantidad=Count("id")).order_by("-anio", "-mes", "-quincena")
 
     return render(request, 'relevamiento/descargar_datos.html',
@@ -625,11 +625,9 @@ def descargar_datos(request):
 
 
 def _lecturas_del_periodo(anio, mes, quincena=None, region_id=None, funcion=Avg):
-    muestras = Muestra.objects.filter(anio=anio, mes=mes)
+    muestras = Muestra.objects.filter(anio=anio, mes=mes, aprobada=True)
     if quincena:
         muestras = muestras.filter(quincena=quincena)
-    # TODO(nicoechaniz): cuando ya esté en uso la aprobación de muestras
-    # agregar aprobada=True a este filtro
     lecturas = Lectura.objects.filter(muestra__in=muestras, precio__gt=0)
     if region_id:
         lecturas = lecturas.filter(
